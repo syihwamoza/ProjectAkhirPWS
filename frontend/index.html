@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nusantara Food API - Solusi Data Kuliner</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --primary-hover: #ff4757;
+            --dark-bg: #1a1a1a;
+            --darker-bg: #141414;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        
+        /* NAVBAR */
+        .navbar { background-color: rgba(26, 26, 26, 0.95); backdrop-filter: blur(10px); padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .navbar-brand { font-weight: 800; color: white !important; letter-spacing: -0.5px; font-size: 1.5rem; }
+        .nav-link { font-weight: 500; color: rgba(255,255,255,0.8) !important; transition: 0.3s; }
+        .nav-link:hover { color: white !important; }
+        
+        /* HERO SECTION */
+        .hero-section { 
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #2d3436 100%); 
+            color: white; 
+            padding: 140px 0 100px 0; 
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* CODE WINDOW ANIMATION */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .code-window-container {
+            animation: float 4s ease-in-out infinite;
+        }
+        .code-window {
+            background: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+            overflow: hidden;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+        }
+        .code-header { background: #252526; padding: 12px 15px; display: flex; gap: 8px; border-bottom: 1px solid #333; align-items: center; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
+        .code-body { padding: 25px; color: #d4d4d4; line-height: 1.6; }
+        .kwd { color: #569cd6; } .str { color: #ce9178; } .cmt { color: #6a9955; }
+
+        /* BUTTONS */
+        .btn-brand { 
+            background-color: var(--primary-color); color: white; font-weight: 600; padding: 12px 35px; border-radius: 8px; border: none; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+        .btn-brand:hover { background-color: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4); }
+        .btn-outline-light { border-width: 2px; font-weight: 600; padding: 12px 35px; border-radius: 8px; }
+        
+        /* FEATURES */
+        .feature-card { 
+            background: white; 
+            padding: 40px 30px; 
+            border-radius: 16px; 
+            transition: 0.3s; 
+            border: 1px solid rgba(0,0,0,0.05); 
+            height: 100%;
+        }
+        .feature-card:hover { background: white; transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: transparent; }
+        .feature-icon-box { width: 70px; height: 70px; background: rgba(255, 107, 107, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; }
+        .feature-icon { font-size: 2rem; color: var(--primary-color); }
+
+        /* FOOTER */
+        footer { background: var(--darker-bg); }
+        footer a { transition: 0.3s; }
+        footer a:hover { color: var(--primary-color) !important; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-pepper-hot text-danger me-2"></i>Nusantara API
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-3"><a class="nav-link" href="docs.html">Dokumentasi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Masuk</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6 text-center">
+                    <h1 class="display-4 fw-bolder mb-4 lh-tight">Integrasi Data Kuliner <span style="color: var(--primary-color); text-decoration: underline decoration-4 decoration-wavy;">Indonesia</span> ke Aplikasimu.</h1>
+                    <p class="lead text-secondary mb-5">RESTful API paling komprehensif untuk resep masakan Nusantara. Didesain untuk Developer yang butuh kecepatan dan keandalan.</p>
+                    <div class="d-flex gap-3 flex-column flex-sm-row justify-content-center">
+                        <a href="register.html" class="btn btn-brand btn-lg">Mulai Sekarang <i class="fas fa-arrow-right ms-2"></i></a>
+                        <a href="docs.html" class="btn btn-outline-light btn-lg">Lihat Dokumentasi</a>
+                    </div>
+                    <div class="mt-5 text-secondary small d-flex gap-4 fw-medium justify-content-center">
+                        <div><i class="fas fa-check-circle text-success me-2"></i>Free Tier Tersedia</div>
+                        <div><i class="fas fa-check-circle text-success me-2"></i>Tanpa Kartu Kredit</div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 d-none d-lg-block">
+                    <div class="code-window-container">
+                        <div class="code-window">
+                            <div class="code-header">
+                                <div class="d-flex gap-2 me-3">
+                                    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                                </div>
+                                <span class="text-muted small font-monospace"><i class="fas fa-code me-2"></i>example_request.js</span>
+                            </div>
+                            <div class="code-body">
+                                <span class="cmt">// 1. Setup Request ke API Nusantara</span><br>
+                                <span class="kwd">const</span> url = <span class="str">'https://api.nusantara.com/v1/recipes/rendang'</span>;<br>
+                                <span class="kwd">const</span> apiKey = <span class="str">'sk-or-v1-mozza-xxxx...'</span>;<br><br>
+                                
+                                <span class="cmt">// 2. Ambil Data dengan Authentikasi</span><br>
+                                <span class="kwd">async function</span> getResep() {<br>
+                                &nbsp;&nbsp;<span class="kwd">const</span> response = <span class="kwd">await</span> fetch(url, {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;headers: { <span class="str">'x-api-key'</span>: apiKey }<br>
+                                &nbsp;&nbsp;});<br>
+                                &nbsp;&nbsp;<span class="kwd">const</span> data = <span class="kwd">await</span> response.json();<br>
+                                &nbsp;&nbsp;<span class="kwd">console</span>.log(<span class="str">"🔥 Data Diterima:"</span>, data);<br>
+                                }<br><br>
+                                getResep();
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light" style="padding-top: 80px;">
+        <div class="container">
+            <div class="text-center mb-5 mw-700 mx-auto">
+                <h6 class="text-danger fw-bold text-uppercase ls-2">Kenapa Nusantara API?</h6>
+                <h2 class="fw-bolder display-6 mb-3">Solusi Praktis Backend</h2>
+                <p class="text-muted lead">Gak perlu repot bikin database dari nol. Fokus saja kembangkan tampilan aplikasimu, biar kami yang sediakan datanya.</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card text-center h-100 shadow-sm">
+                        <div class="feature-icon-box">
+                            <i class="fas fa-laptop-code feature-icon"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Mudah Diintegrasikan</h4>
+                        <p class="text-muted mb-0">Dokumentasi yang jelas dan format data JSON yang standar, bikin developer pemula pun bisa langsung pakai.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center h-100 shadow-sm">
+                        <div class="feature-icon-box">
+                            <i class="fas fa-key feature-icon"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Akses Aman & Terkontrol</h4>
+                        <p class="text-muted mb-0">Setiap request dilindungi dengan API Key unik. Kamu bisa memantau penggunaan data lewat dashboard.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center h-100 shadow-sm">
+                        <div class="feature-icon-box">
+                            <i class="fas fa-book-open feature-icon"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Data Resep Terstruktur</h4>
+                        <p class="text-muted mb-0">Tersedia ribuan resep masakan Indonesia yang sudah rapi, lengkap dengan bahan dan langkah pembuatan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="text-white py-5 text-center">
+        <div class="container pt-4">
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-8 mb-4">
+                    <h4 class="fw-bolder text-white mb-3"><i class="fas fa-pepper-hot text-danger me-2"></i>Nusantara API</h4>
+                    <p class="text-secondary">Menghubungkan kekayaan kuliner Indonesia dengan teknologi masa depan. Platform API terpercaya untuk developer.</p>
+                </div>
+            </div>
+            
+            <div class="border-top border-secondary pt-4 mt-5 text-center text-secondary small">
+                <p class="mb-0">&copy; 2026 Nusantara Food API. Dibuat dengan <i class="fas fa-heart text-danger mx-1"></i> untuk Project Akhir.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

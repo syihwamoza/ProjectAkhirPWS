@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentation - Nusantara API</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { background-color: #f9fafb; font-family: 'Inter', sans-serif; }
+        
+        /* NAVBAR ATAS */
+        .navbar-doc {
+            background-color: #111827;
+            padding: 16px 0;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .brand-logo {
+            font-weight: 800; font-size: 1.25rem; letter-spacing: -0.5px; color: white; text-decoration: none;
+        }
+        
+        /* TOMBOL BACK KE HOME */
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* CONTAINER DOKUMENTASI */
+        .doc-container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+        
+        h1 { color: #111827; font-weight: 800; letter-spacing: -1px; margin-bottom: 1.5rem; }
+        h2 { color: #1f2937; margin-top: 3rem; margin-bottom: 1.2rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; font-weight: 700; }
+        p { color: #4b5563; line-height: 1.8; font-size: 1.05rem; }
+        
+        .code-block {
+            background: #1e293b; color: #e2e8f0; padding: 25px; border-radius: 12px;
+            font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9rem; overflow-x: auto;
+            margin: 20px 0; border: 1px solid #334155; position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .method { display: inline-block; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; color: white; vertical-align: middle; }
+        .get { background-color: #3b82f6; }
+        
+        .endpoint-url { 
+            font-family: monospace; background: #f3f4f6; padding: 6px 12px; 
+            border-radius: 6px; color: #db2777; font-weight: 600; font-size: 0.95rem;
+        }
+        
+        .note-box {
+            background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; 
+            border-radius: 8px; margin-top: 40px; color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar-doc">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a href="/" class="brand-logo">
+            <i class="fas fa-pepper-hot text-danger me-2"></i>Nusantara API <span class="badge bg-primary ms-2" style="font-size: 0.7rem; vertical-align: middle;">DOCS</span>
+        </a>
+        
+        <a href="/" class="btn-back">
+            <i class="fas fa-home me-2"></i> Kembali ke Beranda
+        </a>
+    </div>
+</nav>
+
+<div class="doc-container">
+    
+    <span class="text-secondary fw-bold text-uppercase small ls-1 mb-2 d-block">Developer Guide</span>
+    <h1>Dokumentasi Integrasi</h1>
+    <p class="lead">Selamat datang di pusat referensi Nusantara API. Panduan ini dirancang untuk membantu Anda menghubungkan aplikasi Anda dengan database kuliner kami dalam hitungan menit.</p>
+
+    <h2>1. Autentikasi (API Key)</h2>
+    <p>Keamanan adalah prioritas kami. Setiap permintaan (Request) ke API wajib menyertakan <strong>API Key</strong> yang valid. Key ini dikirim melalui Header HTTP.</p>
+    <p>Anda dapat melihat atau membuat API Key baru di halaman <a href="dashboard.html" class="text-decoration-none fw-bold">Dashboard Developer</a> (Perlu Login).</p>
+    
+    <div class="code-block">
+        <div class="text-secondary mb-2">// Format Header Request</div>
+        <span style="color: #93c5fd;">x-api-key</span>: <span class="text-warning">sk-or-v1-xxxxxxxxxxxxxxxxxxxx</span>
+    </div>
+
+    <h2>2. Mengambil Data Resep</h2>
+    <p>Gunakan endpoint di bawah ini untuk mendapatkan daftar seluruh resep masakan yang tersedia di database kami.</p>
+    
+    <div class="mb-4 mt-4">
+        <div class="d-flex align-items-center mb-3">
+            <span class="method get me-3">GET</span> 
+            <span class="endpoint-url">/api/v1/recipes</span>
+        </div>
+        
+        <p><strong>Contoh Response JSON:</strong></p>
+        <div class="code-block">
+[
+  {
+    "id": 1,
+    "judul": "Rendang Sapi",
+    "deskripsi": "Masakan daging bercita rasa pedas...",
+    "gambar": "http://localhost:3000/uploads/rendang.jpg",
+    "bahan": "Daging sapi, Santan, ...",
+    "langkah": "1. Rebus daging..."
+  },
+  ...
+]
+        </div>
+    </div>
+
+    <h2>3. Contoh Implementasi (JavaScript)</h2>
+    <p>Berikut adalah contoh kode sederhana menggunakan <code>fetch</code> untuk menampilkan data resep di console browser Anda.</p>
+    <div class="code-block">
+<span style="color:#c678dd">const</span> apiKey = <span style="color:#98c379">'MASUKKAN_KEY_ANDA_DISINI'</span>;
+
+<span style="color:#e5c07b">async</span> <span style="color:#c678dd">function</span> <span style="color:#61afef">getResep</span>() {
+    <span style="color:#c678dd">try</span> {
+        <span style="color:#c678dd">const</span> response = <span style="color:#c678dd">await</span> <span style="color:#61afef">fetch</span>(<span style="color:#98c379">'http://localhost:3000/api/v1/recipes'</span>, {
+            headers: {
+                <span style="color:#98c379">'x-api-key'</span>: apiKey
+            }
+        });
+        <span style="color:#c678dd">const</span> data = <span style="color:#c678dd">await</span> response.<span style="color:#61afef">json</span>();
+        console.<span style="color:#61afef">log</span>(<span style="color:#98c379">"Data Diterima:"</span>, data);
+    } <span style="color:#c678dd">catch</span> (error) {
+        console.<span style="color:#61afef">error</span>(<span style="color:#98c379">"Error:"</span>, error);
+    }
+}
+
+<span style="color:#61afef">getResep</span>();
+    </div>
+
+    <div class="note-box">
+        <h5 class="fw-bold mb-2"><i class="fas fa-lightbulb me-2"></i>Tips Pro</h5>
+        <p class="mb-0 small">Belum punya akun? Silakan <a href="register.html" class="fw-bold text-decoration-none">Daftar Gratis</a> untuk mendapatkan API Key pertama Anda.</p>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

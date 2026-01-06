@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Nusantara API</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --sidebar-width: 280px; 
+            --primary-color: #ff6b6b; --primary-hover: #ff4757;
+            --bg-color: #121212; --card-bg: #1e1e1e;
+            --input-bg: #2d2d2d; --text-color: #e2e8f0; --border-color: #333;
+        }
+        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color); color: var(--text-color); }
+        
+        /* SIDEBAR */
+        .sidebar { width: var(--sidebar-width); position: fixed; top: 0; left: 0; bottom: 0; background: #000; border-right: 1px solid var(--border-color); padding: 30px; z-index: 1000; }
+        .sidebar-brand { font-size: 1.4rem; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; margin-bottom: 40px; }
+        .nav-link { color: #9ca3af; font-weight: 500; padding: 12px; border-radius: 12px; display: flex; align-items: center; text-decoration: none; transition: 0.3s; margin-bottom: 5px; cursor: pointer; }
+        .nav-link:hover, .nav-link.active { background-color: var(--primary-color); color: white; }
+        
+        /* CONTENT */
+        .main-content { margin-left: var(--sidebar-width); padding: 40px; }
+        .form-card { background: var(--card-bg); border-radius: 20px; padding: 30px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+        /* ELEMENTS */
+        .form-control { background-color: var(--input-bg); border: 1px solid var(--border-color); color: white; padding: 12px; border-radius: 10px; }
+        .form-control:focus { background-color: var(--input-bg); border-color: var(--primary-color); color: white; box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2); }
+        
+        .table-dark-custom { --bs-table-bg: transparent; --bs-table-color: #e2e8f0; --bs-table-border-color: #333; }
+        .table-dark-custom th { background-color: #2d2d2d; color: var(--primary-color); padding: 15px; border-bottom: 2px solid var(--primary-color); }
+        .table-dark-custom td { padding: 15px; border-bottom: 1px solid #333; vertical-align: middle; }
+        .img-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #444; }
+
+        /* DYNAMIC INPUTS */
+        .input-group-dynamic { margin-bottom: 10px; display: flex; gap: 10px; }
+        .step-number { background: var(--primary-color); color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+        .btn-remove { border: 1px solid #ef4444; color: #ef4444; background: transparent; width: 40px; border-radius: 10px; }
+        .btn-remove:hover { background: #ef4444; color: white; }
+        .btn-add { border: 1px dashed #6b7280; color: #9ca3af; width: 100%; padding: 10px; border-radius: 10px; background: transparent; }
+        .btn-add:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .btn-submit { background: var(--primary-color); border: none; padding: 15px; width: 100%; color: white; font-weight: 700; border-radius: 10px; }
+        
+        /* MODAL DARK */
+        .modal-content { background-color: #1e1e1e; color: white; border: 1px solid #333; }
+        .modal-header { border-bottom: 1px solid #333; }
+        .modal-footer { border-top: 1px solid #333; }
+        .btn-close { filter: invert(1); }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <a href="#" class="sidebar-brand"><i class="fas fa-pepper-hot text-danger me-3"></i> AdminPanel</a>
+        <nav class="nav flex-column">
+            <a onclick="switchView('input', this)" class="nav-link active"><i class="fas fa-plus-square me-2"></i> Input Resep</a>
+            <a onclick="switchView('data', this)" class="nav-link"><i class="fas fa-database me-2"></i> Data Resep</a>
+            <a onclick="switchView('users', this)" class="nav-link"><i class="fas fa-users me-2"></i> User List</a>
+        </nav>
+        <div class="mt-auto pt-5 border-top border-secondary">
+            <a href="/auth/logout" class="nav-link text-danger mt-3"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <h2 class="fw-bold text-white mb-4" id="pageTitle">Tambah Resep Baru</h2>
+
+        <div id="view-input" class="view-section">
+            <div class="row"><div class="col-lg-10 mx-auto"><div class="form-card">
+                <form action="/admin/tambah" method="POST" enctype="multipart/form-data" onsubmit="return gabungData('input')">
+                    <h5 class="fw-bold text-white mb-4">Informasi Dasar</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><label class="text-secondary small">Nama Masakan</label><input type="text" name="judul" class="form-control" required></div>
+                        <div class="col-md-6"><label class="text-secondary small">Foto</label><input type="file" name="foto" class="form-control" required></div>
+                    </div>
+                    <div class="mb-4"><label class="text-secondary small">Deskripsi</label><textarea name="deskripsi" class="form-control" rows="2" required></textarea></div>
+                    
+                    <div class="mb-4"><label class="fw-bold text-white">Bahan-Bahan</label>
+                        <div id="bahanContainerInput">
+                            <div class="input-group-dynamic"><input type="text" class="form-control bahan-item" required></div>
+                        </div>
+                        <button type="button" class="btn-add mt-2" onclick="tambahBahan('Input')">+ Tambah Bahan</button>
+                        <input type="hidden" name="bahan" id="realBahanInput">
+                    </div>
+
+                    <div class="mb-4"><label class="fw-bold text-white">Langkah Pembuatan</label>
+                        <div id="langkahContainerInput">
+                            <div class="input-group-dynamic"><div class="step-number">1</div><textarea class="form-control langkah-item" rows="1" required></textarea></div>
+                        </div>
+                        <button type="button" class="btn-add mt-2" onclick="tambahLangkah('Input')">+ Tambah Langkah</button>
+                        <input type="hidden" name="langkah" id="realLangkahInput">
+                    </div>
+                    <button type="submit" class="btn-submit">SIMPAN DATA</button>
+                </form>
+            </div></div></div>
+        </div>
+
+        <div id="view-data" class="view-section" style="display: none;">
+            <div class="form-card"><div class="table-responsive">
+                <table class="table table-dark-custom mb-0">
+                    <thead><tr><th>ID</th><th>Foto</th><th>Nama</th><th>Deskripsi</th><th class="text-end">Aksi</th></tr></thead>
+                    <tbody id="tableResepBody"></tbody>
+                </table>
+            </div></div>
+        </div>
+
+        <div id="view-users" class="view-section" style="display: none;">
+            <div class="form-card"><div class="table-responsive">
+                <table class="table table-dark-custom mb-0">
+                    <thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th></tr></thead>
+                    <tbody id="tableUserBody"></tbody>
+                </table>
+            </div></div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Edit Resep Lengkap</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEdit" onsubmit="submitEdit(event)">
+                        <input type="hidden" id="editId">
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6"><label class="small text-secondary">Nama Masakan</label><input type="text" id="editJudul" class="form-control" required></div>
+                            <div class="col-md-6"><label class="small text-secondary">Ganti Foto (Opsional)</label><input type="file" id="editFoto" class="form-control"></div>
+                        </div>
+                        <div class="mb-3"><label class="small text-secondary">Deskripsi</label><textarea id="editDeskripsi" class="form-control" rows="2" required></textarea></div>
+
+                        <div class="mb-3"><label class="fw-bold text-danger">Edit Bahan</label>
+                            <div id="bahanContainerEdit"></div> <button type="button" class="btn-add mt-2 btn-sm" onclick="tambahBahan('Edit')">+ Tambah Baris</button>
+                        </div>
+
+                        <div class="mb-3"><label class="fw-bold text-danger">Edit Langkah</label>
+                            <div id="langkahContainerEdit"></div> <button type="button" class="btn-add mt-2 btn-sm" onclick="tambahLangkah('Edit')">+ Tambah Langkah</button>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger w-100 fw-bold py-3">UPDATE PERUBAHAN</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function switchView(v, el) {
+            document.querySelectorAll('.view-section').forEach(e => e.style.display='none');
+            document.querySelectorAll('.nav-link').forEach(e => e.classList.remove('active'));
+            document.getElementById('view-'+v).style.display='block';
+            el.classList.add('active');
+            if(v==='data') loadTableResep();
+            if(v==='users') loadTableUsers();
+        }
+
+        async function loadTableResep() {
+            const res = await fetch('/admin/api/resep'); const data = await res.json();
+            const tb = document.getElementById('tableResepBody'); tb.innerHTML='';
+            data.forEach(d => {
+                tb.innerHTML += `<tr><td>#${d.id}</td><td><img src="${d.gambar}" class="img-thumb"></td>
+                <td class="fw-bold text-white">${d.judul}</td><td class="small text-secondary">${d.deskripsi.substring(0,40)}...</td>
+                <td class="text-end"><button class="btn btn-sm btn-outline-warning me-1" onclick="openEditModal(${d.id})"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="hapusResep(${d.id})"><i class="fas fa-trash"></i></button></td></tr>`;
+            });
+        }
+
+        async function loadTableUsers() {
+            const res = await fetch('/admin/api/users'); const data = await res.json();
+            const tb = document.getElementById('tableUserBody'); tb.innerHTML='';
+            data.forEach(u => tb.innerHTML += `<tr><td>#${u.id}</td><td class="fw-bold text-white">${u.username}</td><td>${u.email}</td><td>${u.role}</td><td class="text-end"><span class="badge bg-primary">Active</span></td></tr>`);
+        }
+
+        async function hapusResep(id) { if(confirm("Yakin hapus?")) { await fetch('/admin/api/resep/'+id, {method:'DELETE'}); loadTableResep(); }}
+
+        // --- FITUR EDIT CANGGIH ---
+        async function openEditModal(id) {
+            // 1. Ambil Data Detail
+            const res = await fetch(`/admin/api/resep/${id}`);
+            const data = await res.json();
+
+            // 2. Isi Form Standar
+            document.getElementById('editId').value = data.id;
+            document.getElementById('editJudul').value = data.judul;
+            document.getElementById('editDeskripsi').value = data.deskripsi;
+            document.getElementById('editFoto').value = ""; // Reset file input
+
+            // 3. GENERATE BAHAN (Split text -> Input Rows)
+            const cBahan = document.getElementById('bahanContainerEdit'); cBahan.innerHTML = '';
+            const bahanArr = data.bahan.split('\n');
+            bahanArr.forEach(txt => {
+                if(txt.trim()){
+                    cBahan.innerHTML += `<div class="input-group-dynamic"><input type="text" class="form-control bahan-item-edit" value="${txt}"><button type="button" class="btn-remove" onclick="this.parentElement.remove()">x</button></div>`;
+                }
+            });
+
+            // 4. GENERATE LANGKAH (Split text -> Remove Numbers -> Input Rows)
+            const cLangkah = document.getElementById('langkahContainerEdit'); cLangkah.innerHTML = '';
+            const langkahArr = data.langkah.split('\n');
+            langkahArr.forEach((txt, idx) => {
+                if(txt.trim()){
+                    // Hapus angka di depan (misal "1. Rebus" jadi "Rebus")
+                    const cleanText = txt.replace(/^\d+\.\s*/, ''); 
+                    cLangkah.innerHTML += `<div class="input-group-dynamic"><div class="step-number">${idx+1}</div><textarea class="form-control langkah-item-edit" rows="1">${cleanText}</textarea><button type="button" class="btn-remove" onclick="hapusLangkahEdit(this)">x</button></div>`;
+                }
+            });
+
+            // 5. Tampilkan Modal
+            new bootstrap.Modal(document.getElementById('editModal')).show();
+        }
+
+        async function submitEdit(e) {
+            e.preventDefault();
+            const id = document.getElementById('editId').value;
+            const judul = document.getElementById('editJudul').value;
+            const deskripsi = document.getElementById('editDeskripsi').value;
+            const fileInput = document.getElementById('editFoto');
+            
+            // Gabung Bahan Edit
+            const bArr = []; document.querySelectorAll('.bahan-item-edit').forEach(i => {if(i.value) bArr.push(i.value)});
+            const bahan = bArr.join('\n');
+
+            // Gabung Langkah Edit
+            const lArr = []; document.querySelectorAll('.langkah-item-edit').forEach((i, idx) => {if(i.value) lArr.push((idx+1)+". "+i.value)});
+            const langkah = lArr.join('\n');
+
+            // Pakai FormData biar bisa upload file
+            const formData = new FormData();
+            formData.append('judul', judul);
+            formData.append('deskripsi', deskripsi);
+            formData.append('bahan', bahan);
+            formData.append('langkah', langkah);
+            if(fileInput.files[0]) formData.append('foto', fileInput.files[0]);
+
+            // Kirim ke Server (PUT)
+            await fetch(`/admin/api/resep/${id}`, { method: 'PUT', body: formData });
+            
+            // Tutup Modal & Refresh
+            bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+            loadTableResep();
+            alert("Data Berhasil Diupdate Lengkap!");
+        }
+
+        // --- FUNGSI BANTUAN DINAMIS ---
+        function tambahBahan(type) { // type = 'Input' or 'Edit'
+            const c = document.getElementById(`bahanContainer${type}`);
+            const cls = type === 'Input' ? 'bahan-item' : 'bahan-item-edit';
+            c.insertAdjacentHTML('beforeend', `<div class="input-group-dynamic"><input type="text" class="form-control ${cls}" placeholder="Bahan..." required><button type="button" class="btn-remove" onclick="this.parentElement.remove()">x</button></div>`);
+        }
+        function tambahLangkah(type) {
+            const c = document.getElementById(`langkahContainer${type}`);
+            const no = c.children.length + 1;
+            const cls = type === 'Input' ? 'langkah-item' : 'langkah-item-edit';
+            const func = type === 'Input' ? 'hapusLangkahInput' : 'hapusLangkahEdit'; // Beda fungsi hapus biar aman
+            c.insertAdjacentHTML('beforeend', `<div class="input-group-dynamic"><div class="step-number">${no}</div><textarea class="form-control ${cls}" rows="1" placeholder="Langkah..." required></textarea><button type="button" class="btn-remove" onclick="${func}(this)">x</button></div>`);
+        }
+        function hapusLangkahInput(btn) { reorderSteps(btn, 'langkahContainerInput'); }
+        function hapusLangkahEdit(btn) { reorderSteps(btn, 'langkahContainerEdit'); }
+        function reorderSteps(btn, containerId) {
+            btn.parentElement.remove();
+            document.getElementById(containerId).querySelectorAll('.input-group-dynamic').forEach((d, i) => d.querySelector('.step-number').innerText = i + 1);
+        }
+
+        // Simpan Data Input Baru
+        function gabungData(type) {
+            const b = [], l = [];
+            document.querySelectorAll('.bahan-item').forEach(i => {if(i.value) b.push(i.value)});
+            document.querySelectorAll('.langkah-item').forEach((i, idx) => {if(i.value) l.push((idx+1)+". "+i.value)});
+            document.getElementById('realBahanInput').value = b.join('\n');
+            document.getElementById('realLangkahInput').value = l.join('\n');
+            return true;
+        }
+    </script>
+</body>
+</html>

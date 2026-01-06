@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Demo - Nusantara Food App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { background-color: #f1f5f9; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* HEADER STYLE */
+        .app-header {
+            background: white; padding: 25px 0; border-bottom: 1px solid #e2e8f0;
+            position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+        
+        /* SEARCH BAR */
+        .search-container { position: relative; max-width: 600px; margin: 0 auto; }
+        .form-control-search { 
+            border-radius: 50px; padding: 15px 25px 15px 50px; font-size: 1rem; border: 2px solid #e2e8f0; 
+            transition: 0.3s; background: #f8fafc;
+        }
+        .form-control-search:focus { border-color: #ff6b6b; background: white; box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1); outline: none; }
+        .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        
+        /* CARD RESEP */
+        .recipe-card {
+            background: white; border-radius: 16px; overflow: hidden; border: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); height: 100%; position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); cursor: pointer;
+        }
+        .recipe-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .card-img-wrapper { height: 220px; overflow: hidden; position: relative; }
+        .card-img-top { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .recipe-card:hover .card-img-top { transform: scale(1.08); }
+        .card-body { padding: 24px; }
+        .card-title { font-weight: 800; color: #0f172a; margin-bottom: 8px; font-size: 1.15rem; }
+        .card-desc { color: #64748b; font-size: 0.9rem; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* JSON VIEWER (SUDAH DIKASIH SPACE) */
+        .json-box { 
+            background: #1e293b; 
+            color: #a5b4fc; 
+            padding: 25px; 
+            border-radius: 12px; 
+            font-family: 'Consolas', monospace; 
+            display: none; 
+            margin-top: 30px; 
+            margin-bottom: 60px; /* <--- INI JARAK KE BAWAHNYA */
+            max-height: 400px; 
+            overflow: auto; 
+            border: 1px solid #334155; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* MODAL STYLING */
+        .modal-content { border-radius: 24px; border: none; overflow: hidden; }
+        .modal-hero-img { width: 100%; height: 350px; object-fit: cover; }
+        .modal-header-custom { position: relative; margin-top: -80px; padding: 0 30px; z-index: 10; }
+        .modal-title-box { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        
+        /* LIST STYLE */
+        .ingredient-item {
+            display: flex; align-items: flex-start; margin-bottom: 12px; padding: 10px; 
+            background: #f0fdf4; border-radius: 8px; border-left: 4px solid #22c55e;
+        }
+        .ingredient-text { font-size: 0.95rem; color: #166534; font-weight: 500; }
+        
+        .step-item { position: relative; padding-left: 40px; margin-bottom: 20px; }
+        .step-number {
+            position: absolute; left: 0; top: 0; width: 30px; height: 30px; background: #ff6b6b; color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.4);
+        }
+        .step-line {
+            position: absolute; left: 14px; top: 30px; bottom: -20px; width: 2px; background: #e2e8f0; z-index: 0;
+        }
+        .step-item:last-child .step-line { display: none; }
+        .step-text { font-size: 0.95rem; color: #334155; line-height: 1.6; }
+
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="container text-center">
+            <h4 class="fw-bold mb-4" style="letter-spacing: -0.5px;">
+                <i class="fas fa-mobile-alt text-danger me-2"></i> Simulator Aplikasi Resep
+            </h4>
+            <div class="search-container">
+                <i class="fas fa-key search-icon"></i>
+                <input type="text" id="apiKeyInput" class="form-control form-control-search" placeholder="Paste API Key Anda di sini...">
+                <button class="btn btn-danger position-absolute end-0 top-50 translate-middle-y me-2 rounded-pill px-4 fw-bold" onclick="fetchData()">
+                    Load Data
+                </button>
+            </div>
+            <div class="mt-3">
+                <small onclick="toggleJson()" style="cursor: pointer; color: #64748b; text-decoration: underline;">
+                    <i class="fas fa-code me-1"></i> Lihat Data Mentah (JSON)
+                </small>
+            </div>
+        </div>
+    </header>
+
+    <div class="container py-5">
+        <div id="jsonOutput" class="json-box"></div>
+
+        <div id="recipeGrid" class="row g-4">
+            <div class="col-12 text-center py-5">
+                <div class="display-1 text-muted opacity-25 mb-3"><i class="fas fa-utensils"></i></div>
+                <h5 class="text-muted fw-light">Data belum dimuat. Masukkan Key lalu klik Load.</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="recipeModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="position-relative">
+                    <img id="modalImg" src="" class="modal-hero-img">
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-4 p-2 bg-dark bg-opacity-50 rounded-circle" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-header-custom">
+                    <div class="modal-title-box">
+                        <span class="badge bg-danger bg-opacity-10 text-danger mb-2 px-3 py-2 rounded-pill">Authentic Recipe</span>
+                        <h2 class="fw-bold mb-2" id="modalTitle">Nama Masakan</h2>
+                        <p class="text-muted mb-0" id="modalDesc">Deskripsi singkat masakan akan muncul di sini.</p>
+                    </div>
+                </div>
+
+                <div class="modal-body p-4 p-lg-5">
+                    <div class="row g-5">
+                        <div class="col-lg-5">
+                            <h5 class="fw-bold mb-4 d-flex align-items-center">
+                                <span class="bg-success text-white rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="fas fa-carrot"></i></span>
+                                Bahan-Bahan
+                            </h5>
+                            <div id="ingredientsList"></div>
+                        </div>
+
+                        <div class="col-lg-7 border-start border-light ps-lg-5">
+                            <h5 class="fw-bold mb-4 d-flex align-items-center">
+                                <span class="bg-warning text-white rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="fas fa-fire"></i></span>
+                                Cara Membuat
+                            </h5>
+                            <div id="stepsList"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer justify-content-center border-0 pb-4">
+                    <button type="button" class="btn btn-light rounded-pill px-5 fw-bold text-muted" data-bs-dismiss="modal">Tutup Tampilan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let allRecipes = [];
+
+        async function fetchData() {
+            const apiKey = document.getElementById('apiKeyInput').value;
+            const grid = document.getElementById('recipeGrid');
+            const jsonBox = document.getElementById('jsonOutput');
+
+            if(!apiKey) return alert("API Key belum diisi!");
+
+            grid.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-danger" role="status"></div><p class="mt-3 text-secondary">Menghubungkan ke Server...</p></div>';
+
+            try {
+                const res = await fetch('http://localhost:3000/api/v1/recipes', {
+                    headers: { 'x-api-key': apiKey }
+                });
+                const data = await res.json();
+
+                jsonBox.innerText = JSON.stringify(data, null, 2);
+
+                if(res.status === 200) {
+                    allRecipes = data.data;
+                    renderGrid(allRecipes);
+                } else {
+                    grid.innerHTML = `<div class="col-12 text-center text-danger py-5"><h3><i class="fas fa-lock"></i> Akses Ditolak</h3><p>${data.message}</p></div>`;
+                }
+            } catch (err) {
+                grid.innerHTML = `<div class="col-12 text-center text-danger py-5">Error: ${err.message}</div>`;
+            }
+        }
+
+        function renderGrid(recipes) {
+            const grid = document.getElementById('recipeGrid');
+            grid.innerHTML = '';
+            
+            if(recipes.length === 0) {
+                grid.innerHTML = '<div class="col-12 text-center">Tidak ada data resep.</div>';
+                return;
+            }
+
+            recipes.forEach((item, index) => {
+                grid.innerHTML += `
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="recipe-card" onclick="openDetail(${index})">
+                        <div class="card-img-wrapper">
+                            <img src="${item.gambar}" class="card-img-top" onerror="this.src='https://via.placeholder.com/400x300'">
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-white text-dark shadow-sm">ID: ${item.id}</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">${item.judul}</h5>
+                            <p class="card-desc">${item.deskripsi}</p>
+                            <div class="mt-3 d-flex justify-content-between align-items-center">
+                                <small class="text-danger fw-bold">Lihat Detail <i class="fas fa-arrow-right ms-1"></i></small>
+                                <i class="far fa-heart text-muted"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function openDetail(index) {
+            const item = allRecipes[index];
+            document.getElementById('modalImg').src = item.gambar;
+            document.getElementById('modalTitle').innerText = item.judul;
+            document.getElementById('modalDesc').innerText = item.deskripsi;
+
+            // Parsing Bahan
+            const bahanContainer = document.getElementById('ingredientsList');
+            bahanContainer.innerHTML = '';
+            let bahanArray = item.bahan.split(/,|\n/).filter(t => t.trim() !== '');
+            bahanArray.forEach(bahan => {
+                bahanContainer.innerHTML += `<div class="ingredient-item"><i class="fas fa-check-circle text-success me-2 mt-1"></i><span class="ingredient-text">${bahan.trim()}</span></div>`;
+            });
+
+            // Parsing Langkah
+            const stepContainer = document.getElementById('stepsList');
+            stepContainer.innerHTML = '';
+            let stepArray = item.langkah.split(/\d+\.\s|\n/).filter(t => t.trim() !== '');
+            stepArray.forEach((step, i) => {
+                stepContainer.innerHTML += `<div class="step-item"><div class="step-line"></div><div class="step-number">${i+1}</div><div class="step-text">${step.trim()}</div></div>`;
+            });
+
+            new bootstrap.Modal(document.getElementById('recipeModal')).show();
+        }
+
+        function toggleJson() {
+            const box = document.getElementById('jsonOutput');
+            box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+        }
+    </script>
+</body>
+</html>
