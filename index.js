@@ -86,4 +86,40 @@ app.post('/auth/admin-login', (req, res) => {
 });
 
 app.get('/auth/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
+// ===== SINGLE KEY LOGIC (Developer Dashboard) =====
+
+// 1. Get My Key
+app.get('/my-key', (req, res) => {
+    if (!req.session.user) return res.status(401).json({ error: 'Login required' });
+    
+    db.query("SELECT * FROM api_keys WHERE user_id = ? LIMIT 1", [req.session.user.id], (err, results) => {
+        if (results.length > 0) {
+            res.json({ found: true, key: results[0] });
+        } else {
+            res.json({ found: false });
+        }
+    });
+});
+
+// 2. Regenerate Key
+app.post('/regenerate-key', (req, res) => {
+    if (!req.session.user) return res.status(401).json({ error: 'Login required' });
+
+    const newKey = generateApiKey();
+
+    // Hapus key lama, insert key baru
+    db.query("DELETE FROM api_keys WHERE user_id = ?", [req.session.user.id], (err) => {
+        if (err) return res.status(500).json({ error: err });
+        
+        db.query("INSERT INTO api_keys (user_id, api_key, name, is_active) VALUES (?, ?, ?, 1)", 
+            [req.session.user.id, newKey, 'Main Key'], 
+            (err, result) => {
+                if (err) return res.status(500).json({ error: err });
+                res.json({ success: true, new_key: newKey });
+            }
+        );
+    });
+});
+
+
 
