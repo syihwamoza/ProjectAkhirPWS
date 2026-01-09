@@ -22,3 +22,24 @@ db.connect(err => {
     console.log('✅ Database connected');
 });
 
+// ===== MIDDLEWARE =====
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static('frontend'));
+app.use('/uploads', express.static(path.join(__dirname, 'frontend/uploads')));
+app.use(session({
+    secret: 'rahasia_dapur_nusantara',
+    resave: false,
+    saveUninitialized: true
+}));
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => cb(null, 'frontend/uploads/'),
+        filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+    })
+});
+
+function generateApiKey() {
+    return 'sk-or-v1-' + crypto.randomBytes(16).toString('hex');
+}
