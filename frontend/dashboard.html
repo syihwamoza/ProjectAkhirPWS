@@ -2,57 +2,45 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Developer - Nusantara API</title>
+    <title>Dashboard Developer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        body { background-color: #f9fafb; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        
-        /* SIDEBAR */
-        .sidebar { background: #111827; min-height: 100vh; color: white; position: fixed; width: 260px; border-right: 1px solid #1f2937; z-index: 100; }
-        .sidebar-brand { padding: 24px; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.5px; color: white; text-decoration: none; display: block; }
+        body { background-color: #f9fafb; font-family: 'Inter', sans-serif; }
+        .sidebar { background: #111827; min-height: 100vh; color: white; position: fixed; width: 260px; }
         .main-content { margin-left: 260px; padding: 40px; }
         
-        .nav-link { 
-            color: #9ca3af; padding: 12px 24px; cursor: pointer; transition: all 0.2s; 
-            font-weight: 500; border-left: 3px solid transparent; display: flex; align-items: center; text-decoration: none;
+        /* LOGO LINK STYLE (YANG BARU) */
+        .sidebar-brand {
+            display: block; padding: 24px; font-weight: 800; font-size: 1.25rem;
+            color: white; text-decoration: none; transition: 0.2s;
         }
+        .sidebar-brand:hover { color: #d1d5db; }
+
+        /* Nav Link Style */
+        .nav-link { color: #9ca3af; padding: 12px 24px; cursor: pointer; display: flex; align-items: center; text-decoration: none; transition: 0.2s; }
         .nav-link:hover { color: white; background: rgba(255,255,255,0.05); }
-        .nav-link.active { color: white; background: rgba(255,255,255,0.08); border-left-color: #ff6b6b; }
+        .nav-link.active { color: white; background: rgba(255,255,255,0.08); border-left: 3px solid #ff6b6b; }
         .nav-link i { width: 24px; text-align: center; margin-right: 12px; }
         
-        /* CARD & TABLE STYLE */
-        .card-dashboard { border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: 12px; background: white; overflow: hidden; padding: 24px; }
-        
-        .table-router { width: 100%; border-collapse: separate; border-spacing: 0; }
-        .table-router th {
-            background-color: #f9fafb; color: #4b5563; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;
-            padding: 16px 24px; border-bottom: 1px solid #e5e7eb; text-align: left;
+        /* CARD API STYLE */
+        .api-card {
+            background: white; border: 1px solid #e5e7eb; border-radius: 12px;
+            padding: 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            max-width: 800px;
         }
-        .table-router td {
-            padding: 20px 24px; border-bottom: 1px solid #e5e7eb; color: #111827; font-size: 0.95rem; vertical-align: middle; background: white;
+        .api-input-group {
+            background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px;
+            display: flex; align-items: center; padding: 5px; margin-top: 15px;
         }
-
-        .key-code-box { 
-            background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; padding: 6px 10px; 
-            font-family: 'Monaco', monospace; color: #4b5563; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between;
+        .api-input {
+            background: transparent; border: none; width: 100%; padding: 10px 15px;
+            font-family: 'Monaco', monospace; color: #374151; font-size: 1rem; outline: none;
         }
-        
-        .btn-primary-brand {
-            background-color: #4f46e5; color: white; font-weight: 600; border-radius: 8px; padding: 10px 20px; border: none; transition: 0.2s;
-        }
-
-        /* DOCS STYLE - Persis Dokumentasi Sebelumnya */
-        .code-block {
-            background: #1e293b; color: #e2e8f0; padding: 20px; border-radius: 8px;
-            font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9rem; overflow-x: auto;
-            margin: 15px 0; border: 1px solid #334155;
-        }
-        .method { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; color: white; }
-        .get { background-color: #3b82f6; }
-        .endpoint-url { font-family: monospace; background: #f3f4f6; padding: 4px 8px; border-radius: 4px; color: #be185d; font-weight: 600; }
+        .btn-copy { background: white; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 12px; transition: 0.2s; }
+        .btn-copy:hover { background: #f9fafb; }
     </style>
 </head>
 <body>
@@ -61,185 +49,94 @@
     <a href="/" class="sidebar-brand">
         <i class="fas fa-pepper-hot text-danger me-2"></i>Nusantara API
     </a>
-    <div class="px-4 mb-3 text-muted small fw-bold text-uppercase ls-1">Main Menu</div>
-    <nav class="nav flex-column">
-        <a id="nav-keys" class="nav-link active" onclick="switchTab('keys')">
-            <i class="fas fa-key"></i> API Keys
+    
+    <nav class="nav flex-column mt-3">
+        <a class="nav-link active" href="#">
+            <i class="fas fa-key"></i> API Dashboard
         </a>
-        
-        <a id="nav-docs" class="nav-link" onclick="switchTab('docs')">
-            <i class="fas fa-book"></i> Documentation
-        </a>
-
         <a class="nav-link text-warning" href="test.html" target="_blank">
             <i class="fas fa-rocket"></i> API Playground
         </a>
     </nav>
-    <div class="mt-auto p-4 border-top border-dark" style="position: absolute; bottom: 0; width: 100%;">
-        <a class="nav-link text-danger ps-0" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+
+    <div class="p-4 mt-auto" style="position: absolute; bottom: 0; width: 260px;">
+        <a class="text-danger text-decoration-none" href="/auth/logout">
+            <i class="fas fa-sign-out-alt me-2"></i> Log Out
+        </a>
     </div>
 </div>
 
 <div class="main-content">
-    
-    <div id="section-keys" class="tab-content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-4 text-dark">Developer Dashboard</h2>
+
+    <div class="api-card">
+        <div class="d-flex justify-content-between align-items-start">
             <div>
-                <h2 class="fw-bold mb-1 text-dark">API Keys</h2>
-                <p class="text-muted mb-0">Kelola kunci rahasia untuk mengakses API Anda.</p>
+                <h4 class="fw-bold text-dark">Your API Key</h4>
+                <p class="text-muted small mb-0">Gunakan kunci ini untuk mengakses semua endpoint API.</p>
             </div>
-            <button class="btn btn-primary-brand" data-bs-toggle="modal" data-bs-target="#createKeyModal">
-                <i class="fas fa-plus me-2"></i>Create New Key
+            <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
+                <i class="fas fa-check-circle me-1"></i> Active
+            </span>
+        </div>
+
+        <div class="api-input-group">
+            <input type="text" id="apiKeyDisplay" class="api-input" value="Loading..." readonly>
+            <button class="btn-copy" onclick="copyKey()" title="Copy to Clipboard">
+                <i class="far fa-copy text-muted"></i>
             </button>
         </div>
 
-        <div class="card-dashboard p-0">
-            <table class="table-router mb-0">
-                <thead>
-                    <tr>
-                        <th style="width: 35%;">Name & ID</th>
-                        <th style="width: 35%;">Secret Key</th>
-                        <th style="width: 15%;">Status</th>
-                        <th style="width: 15%;">Created</th>
-                        <th style="width: 5%;"></th>
-                    </tr>
-                </thead>
-                <tbody id="keyTableBody">
-                    <tr><td colspan="5" class="text-center p-5 text-muted">Memuat data... <i class="fas fa-spinner fa-spin ms-2"></i></td></tr>
-                </tbody>
-            </table>
+        <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+            <div class="text-muted small">
+                <i class="fas fa-info-circle me-1"></i> Jangan bagikan kunci ini kepada siapapun.
+            </div>
+            <button class="btn btn-outline-danger btn-sm" onclick="regenerateKey()">
+                <i class="fas fa-sync-alt me-2"></i> Regenerate Key
+            </button>
         </div>
     </div>
 
-    <div id="section-docs" class="tab-content" style="display:none;">
-        <span class="badge bg-primary bg-opacity-10 text-primary mb-3 px-3 py-2 rounded-pill">Versi 1.0</span>
-        <h2 class="fw-bold text-dark">Dokumentasi Resmi</h2>
-        <p class="text-muted lead">Panduan lengkap untuk mengintegrasikan data kuliner Nusantara ke dalam aplikasi Anda.</p>
-
-        <div class="card-dashboard mt-4">
-            <h4 class="fw-bold">1. Autentikasi</h4>
-            <p class="text-muted">Setiap permintaan ke API harus menyertakan API Key yang valid melalui Header.</p>
-            <div class="code-block">
-                <span class="text-secondary">// Header Request</span><br>
-                <span style="color: #93c5fd;">x-api-key:</span> <span class="text-warning">sk-or-v1-xxxxxxxxxxxxxxxxxxxx</span>
-            </div>
-
-            <h4 class="fw-bold mt-5">2. Endpoint Resep</h4>
-            <div class="d-flex align-items-center mb-3">
-                <span class="method get me-3">GET</span> 
-                <span class="endpoint-url">/api/v1/recipes</span>
-            </div>
-            <p class="text-muted">Mengambil daftar semua resep masakan yang tersedia.</p>
-            
-            <p class="fw-bold mt-4 mb-2">Contoh Response:</p>
-            <div class="code-block">
-[
-  {
-    "id": 1,
-    "judul": "Rendang Sapi",
-    "deskripsi": "Masakan daging bercita rasa pedas...",
-    "gambar": "http://localhost:3000/uploads/rendang.jpg"
-  },
-  ...
-]
-            </div>
-
-            <h4 class="fw-bold mt-5">3. Contoh Implementasi (JS Fetch)</h4>
-            <div class="code-block">
-<span style="color:#c678dd">const</span> apiKey = <span style="color:#98c379">'API_KEY_KAMU'</span>;<br><br>
-fetch(<span style="color:#98c379">'http://localhost:3000/api/v1/recipes'</span>, {<br>
-&nbsp;&nbsp;headers: { <span style="color:#98c379">'x-api-key'</span>: apiKey }<br>
-})<br>
-.then(res => res.json())<br>
-.then(data => console.log(data));
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<div class="modal fade" id="createKeyModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-bottom-0 p-4">
-                <h5 class="modal-title fw-bold">Create a new API key</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body px-4 pb-4">
-                <label class="form-label fw-bold text-dark mb-2">Nama Kunci</label>
-                <input type="text" id="keyNameInput" class="form-control p-3" placeholder='Misal: "App Mobile"'>
-            </div>
-            <div class="modal-footer border-top-0 px-4 pb-4 bg-light rounded-bottom-4">
-                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary-brand" onclick="submitNewKey()">Create Key</button>
-            </div>
+    <div class="mt-5">
+        <h5 class="fw-bold">Cara Penggunaan</h5>
+        <div class="bg-dark text-white p-3 rounded mt-2" style="font-family: monospace;">
+            curl -H "x-api-key: <span class="text-warning" id="docKey">YOUR_KEY</span>" http://localhost:3000/api/v1/recipes
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // FUNGSI TAB SWITCHING
-    function switchTab(tabName) {
-        // Sembunyikan semua section
-        document.getElementById('section-keys').style.display = 'none';
-        document.getElementById('section-docs').style.display = 'none';
-        
-        // Matikan semua nav active
-        document.getElementById('nav-keys').classList.remove('active');
-        document.getElementById('nav-docs').classList.remove('active');
-        
-        // Tampilkan yang dipilih
-        document.getElementById('section-' + tabName).style.display = 'block';
-        document.getElementById('nav-' + tabName).classList.add('active');
-    }
-
-    // LOGIC API KEYS (Fetch data asli)
-    fetch('/my-keys').then(res => res.json()).then(data => renderTable(data.keys));
-
-    function renderTable(keys) {
-        const tbody = document.getElementById('keyTableBody');
-        tbody.innerHTML = '';
-        if(keys.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center p-5 text-muted">Belum ada API Key.</td></tr>`;
-            return;
-        }
-        keys.forEach(key => {
-            const date = new Date(key.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-            const masked = key.api_key.substring(0, 12) + "••••" + key.api_key.substring(key.api_key.length - 4);
-            tbody.innerHTML += `
-                <tr>
-                    <td><div class="fw-bold mb-1">${key.name}</div><div class="text-muted small">ID: key_${key.id}</div></td>
-                    <td>
-                        <div class="key-code-box">
-                            <span>${masked}</span>
-                            <button class="btn btn-sm btn-light p-1" onclick="navigator.clipboard.writeText('${key.api_key}'); alert('Tersalin!')">
-                                <i class="far fa-copy"></i>
-                            </button>
-                        </div>
-                    </td>
-                    <td><span class="badge bg-success bg-opacity-10 text-success px-3 py-2"><i class="fas fa-check-circle me-1"></i> Active</span></td>
-                    <td class="text-muted fw-medium">${date}</td>
-                    <td class="text-end">
-                        <button class="btn btn-link text-danger p-0" onclick="deleteKey(${key.id})"><i class="fas fa-trash-alt"></i></button>
-                    </td>
-                </tr>`;
+    fetch('/my-key')
+        .then(res => res.json())
+        .then(data => {
+            if (data.found) {
+                updateUI(data.key.api_key);
+            } else {
+                regenerateKey(); 
+            }
         });
+
+    function updateUI(key) {
+        document.getElementById('apiKeyDisplay').value = key;
+        document.getElementById('docKey').innerText = key;
     }
 
-    function submitNewKey() {
-        const nameVal = document.getElementById('keyNameInput').value;
-        fetch('/create-key', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name: nameVal }) })
-        .then(res => res.json()).then(data => {
-            renderTable(data.keys);
-            bootstrap.Modal.getInstance(document.getElementById('createKeyModal')).hide();
-        });
+    function copyKey() {
+        const keyText = document.getElementById('apiKeyDisplay');
+        keyText.select();
+        navigator.clipboard.writeText(keyText.value);
+        alert('API Key tersalin!');
     }
 
-    function deleteKey(id) {
-        if(confirm("Yakin hapus?")) {
-            fetch('/delete-key', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ key_id: id }) })
-            .then(() => location.reload());
+    function regenerateKey() {
+        if(confirm("PERINGATAN: Kunci lama akan dihapus. Yakin ingin ganti kunci baru?")) {
+            fetch('/regenerate-key', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    updateUI(data.new_key);
+                    alert("Kunci baru berhasil dibuat!");
+                });
         }
     }
 </script>
