@@ -43,3 +43,47 @@ const upload = multer({
 function generateApiKey() {
     return 'sk-or-v1-' + crypto.randomBytes(16).toString('hex');
 }
+// ===== AUTH ROUTES =====
+app.post('/auth/register', (req, res) => {
+    const { username, email, password } = req.body;
+    db.query("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, 'developer')", 
+    [username, email, password], (err, result) => {
+        if (err) return res.send(`<script>alert('Gagal Register!'); window.history.back();</script>`);
+        
+        // Buat API Key Pertama (Single Key Logic)
+        const firstKey = generateApiKey();
+        db.query("INSERT INTO api_keys (user_id, api_key, name, is_active) VALUES (?, ?, ?, 1)", 
+            [result.insertId, firstKey, 'Main Key']);
+            
+        res.redirect('/login.html');
+    });
+});
+
+app.post('/auth/login', (req, res) => {
+    const { username, password } = req.body;
+    db.query("SELECT * FROM users WHERE username = ? AND password = ?", [username, password], (err, results) => {
+        if (results.length > 0) {
+            req.session.user = results[0];
+            if (results[0].role === 'admin') res.redirect('/admin');
+            else res.redirect('/dashboard.html');
+        } else {
+            res.send(`<script>alert('Login Gagal!'); window.history.back();</script>`);
+        }
+    });
+});
+
+app.get('/admin-login', (req, res) => res.sendFile(path.join(__dirname, 'frontend/admin-login.html')));
+app.post('/auth/admin-login', (req, res) => {
+    const { username, password } = req.body;
+    db.query("SELECT * FROM users WHERE username = ? AND password = ? AND role = 'admin'", [username, password], (err, results) => {
+        if (results.length > 0) {
+            req.session.user = results[0];
+            res.redirect('/admin');
+        } else {
+            res.send(`<script>alert('Bukan Admin!'); window.location.href='/admin-login';</script>`);
+        }
+    });
+});
+
+app.get('/auth/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
+
