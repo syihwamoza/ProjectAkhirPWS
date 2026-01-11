@@ -11,8 +11,8 @@ register (user aja)
 ![halaman register user](https://github.com/user-attachments/assets/6c47b7ad-3da7-46fe-9cfe-05d5682a8109)
 login (admin & user)
 ![halaman login admin   user](https://github.com/user-attachments/assets/45e0b0fc-f8d0-46b6-998a-c495103f40ec)
-dokume![halaman utama bagian dokumentasi](https://github.com/user-attachments/assets/86d53bad-4958-47c3-811e-cf7280f0b99f)
-ntasi paduan
+dokumentasi paduan ![halaman utama bagian dokumentasi](https://github.com/user-attachments/assets/86d53bad-4958-47c3-811e-cf7280f0b99f)
+
 
 
 # User Side
